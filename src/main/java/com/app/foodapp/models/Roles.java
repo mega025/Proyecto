@@ -27,9 +27,9 @@ public class Roles {
     @UpdateTimestamp
     private LocalDate updatedAt;
 
-//    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-//    @JsonBackReference
-//    private Set<Users> users = new HashSet<>();
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private Set<Users> users = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -77,5 +77,13 @@ public class Roles {
 
     public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<Users> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<Users> users) {
+        this.users = users;
     }
 }
