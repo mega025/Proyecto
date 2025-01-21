@@ -28,7 +28,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/users/get-users",
-                                "/users/create"
+                                "/users/create",
+                                "/rol/get-rol",
+                                "/rol/create"
                         ).permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(new JwtAuthenticationFilter(this.jwtUtil),
