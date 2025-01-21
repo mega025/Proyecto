@@ -30,7 +30,8 @@ public class SecurityConfig {
                                 "/users/get-users",
                                 "/users/create",
                                 "/rol/get-rol",
-                                "/rol/create"
+                                "/rol/create",
+                                "/rol/{name}"
                         ).permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(new JwtAuthenticationFilter(this.jwtUtil),
