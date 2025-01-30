@@ -31,9 +31,9 @@ public class SecurityConfig {
                                 "/users/create",
                                 "/rol/get-rol",
                                 "/rol/create",
-                                "/rol/{name}"
+                                "/rol/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 ).addFilterBefore(new JwtAuthenticationFilter(this.jwtUtil),
                         org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
         return http.build();

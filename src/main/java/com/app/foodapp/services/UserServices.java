@@ -1,11 +1,15 @@
 package com.app.foodapp.services;
 
+import com.app.foodapp.dto.ApiDelivery;
+import com.app.foodapp.dto.LoginResponse;
 import com.app.foodapp.models.Roles;
 import com.app.foodapp.models.Users;
 import com.app.foodapp.repositories.RolRepository;
 import com.app.foodapp.repositories.UserRepository;
-import org.apache.catalina.User;
+import com.app.foodapp.security.JwtUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -20,6 +24,11 @@ public class UserServices {
     private UserRepository userRepository;
     @Autowired
     private RolRepository rolRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public List<Users> getAllUsers() {
         return this.userRepository.findAll();
@@ -46,7 +55,7 @@ public class UserServices {
         Users newUser = new Users();
 
         newUser.setEmail(user.getEmail());
-        newUser.setPassword(user.getPassword());
+        newUser.setPassword(this.passwordEncoder.encode(user.getPassword()));
         newUser.setFirstName(user.getFirstName());
         newUser.setLastName(user.getLastName());
         newUser.setPhone(user.getPhone());
@@ -70,4 +79,22 @@ public class UserServices {
         return this.userRepository.save(newUser);
     }
 
+    public ApiDelivery login ( String email, String password) {
+        Optional<Users> userOptional = this.userRepository.findByEmail(email);
+
+        if (userOptional.isEmpty())
+            return new ApiDelivery<>("user not found", false, 404, null, "not found");
+
+        Users user = userOptional.get();
+        if (!this.passwordEncoder.matches(password, user.getPassword()))
+            return new ApiDelivery<>("password incorrect", false, 400, null, "password incorrect");
+
+        String token  = this.createToken(email);
+        LoginResponse login = new LoginResponse(user, token);
+        return new ApiDelivery<>("login succes", true, 200, null, "login succes");
+
+    }
+    public String createToken(String email){
+        return this.jwtUtil.generateToken(email);
+    }
 }
